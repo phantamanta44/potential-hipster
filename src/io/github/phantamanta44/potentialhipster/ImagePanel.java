@@ -7,11 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Panel;
 import java.awt.image.BufferedImage;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
-import java.awt.image.LookupOp;
-import java.awt.image.LookupTable;
-import java.awt.image.ShortLookupTable;
+import java.awt.image.BufferedImageOp;
 import java.io.File;
 
 import javax.imageio.ImageIO;
@@ -46,15 +42,8 @@ public class ImagePanel extends Panel {
     	image = null;
     }
     
-    public void convolveImage(int[][] matrixRaw) {
-    	float[] matrix = new float[25];
-    	for (int i = 0; i < matrixRaw.length; i++) {
-    		for (int j = 0; j < matrixRaw[i].length; j++) {
-    			matrix[i + j] = matrixRaw[i][j];
-    		}
-    	}
-    	Kernel kernel = new Kernel(5, 5, matrix);
-    	ConvolveOp oper = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
+    public void convolveImage(int[][] matrix) {
+    	BufferedImageOp oper = FilterFactory.generateConvolution(matrix, matrix.length);
     	image = oper.filter(image, null);
     }
   
@@ -77,24 +66,7 @@ public class ImagePanel extends Panel {
 	}
 
 	public void colorizeImage(Color col) {
-		short[] alpha = new short[256];
-	    short[] red = new short[256];
-	    short[] green = new short[256];
-	    short[] blue = new short[256];
-
-	    for (short i = 0; i < 256; i++) {
-	        alpha[i] = i;
-	        red[i] = (short)((col.getRed() + i*.3)/2);
-	        green[i] = (short)((col.getGreen() + i*.59)/2);
-	        blue[i] = (short)((col.getBlue() + i*.11)/2);
-	    }
-
-	    short[][] data = new short[][] {
-	            red, green, blue, alpha
-	    };
-
-	    LookupTable lookupTable = new ShortLookupTable(0, data);
-	    LookupOp oper = new LookupOp(lookupTable, null);
+		BufferedImageOp oper = FilterFactory.generateColorization(col);
 	    image = oper.filter(image, null);
 	}
 }
