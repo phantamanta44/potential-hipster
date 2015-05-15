@@ -51,6 +51,7 @@ public class PotentiallyHip extends Frame {
 	
 	public static void updateMatrix(int[][] matrix) {
 		instance.setMatrix(matrix);
+		instance.updateFilterStack();
 	}
 	
 	public static boolean isPowerOf(int base, int n) {
@@ -149,11 +150,7 @@ public class PotentiallyHip extends Frame {
 		fileDisplay = new java.awt.List();
 		fileDisplay.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent event) {
-				if (fileDisplay.getSelectedItem() != null)
-					displayImg.setImage(fileList.get(fileDisplay.getSelectedItem()));
-				else
-					displayImg.clearImage();
-				displayImg.repaint();
+				updateFilterStack();
 			}
 		});
 		fileDisplay.addKeyListener(new KeyListener() {
@@ -202,6 +199,7 @@ public class PotentiallyHip extends Frame {
 				else {
 					resizeVal.setText("32x");
 				}
+				updateFilterStack();
 			}
 		});
 		resizeVal.addTextListener(new TextListener() {
@@ -215,6 +213,7 @@ public class PotentiallyHip extends Frame {
 						Double scale = Double.parseDouble(tf.getText().replaceAll("%", "")) * 0.01D;
 						int asp = (int)(32 * scale);
 						resizeDim.setSize(asp, asp);
+						updateFilterStack();
 					}
 				}
 				else {
@@ -224,6 +223,7 @@ public class PotentiallyHip extends Frame {
 						tf.setForeground(Color.BLACK);
 						int asp = Integer.parseInt(tf.getText().replaceAll("x", ""));
 						resizeDim.setSize(asp, asp);
+						updateFilterStack();
 					}
 				}
 			}
@@ -247,6 +247,7 @@ public class PotentiallyHip extends Frame {
 		ChangeListener colUpdater = new ChangeListener() {
 			public void stateChanged(ChangeEvent event) {
 				colorizeColor = new Color(redSlider.getValue(), greenSlider.getValue(), blueSlider.getValue());
+				updateFilterStack();
 			}
 		};
 		redSlider.addChangeListener(colUpdater);
@@ -286,6 +287,19 @@ public class PotentiallyHip extends Frame {
 		fileDisplay.removeAll();
 		for (Entry<String, File> f : fileList.entrySet())
 			fileDisplay.add(f.getKey());
+	}
+	
+	public void updateFilterStack() {
+		if (fileDisplay.getSelectedItem() != null) {
+			displayImg.setImage(fileList.get(fileDisplay.getSelectedItem()));
+			displayImg.resizeImage(resizeDim);
+			if (colorizeColor != Color.BLACK)
+				displayImg.colorizeImage(colorizeColor);
+			// displayImg.convolveImage(convolutionMatrix);
+		}
+		else
+			displayImg.clearImage();
+		displayImg.repaint();
 	}
 	
 }
