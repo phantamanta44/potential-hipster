@@ -1,24 +1,45 @@
 package io.github.phantamanta44.potentialhipster;
 
 import java.awt.Button;
+import java.awt.Choice;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Label;
 import java.awt.Panel;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.TextEvent;
+import java.awt.event.TextListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
+import javax.swing.BorderFactory;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 
 public class PotentiallyHip extends Frame {
 	
 	private static final long serialVersionUID = 1L;
 	private static PotentiallyHip instance;
+	private static final int[] BLANK_ROW = {0, 0, 0, 0, 0};
 	
 	public static void main(String[] args) {
 		// Instantiate window and display
 		instance = new PotentiallyHip();
 		instance.setVisible(true);
+		instance.setInfoText("Load a resource pack.");
 	}
+	
+	public static void updateMatrix(int[][] matrix) {
+		instance.setMatrix(matrix);
+	}
+	
+	private int[][] convolutionMatrix = {BLANK_ROW, BLANK_ROW, {0, 0, 1, 0, 0}, BLANK_ROW, BLANK_ROW};
 	
 	private Panel ioPanel;
 	private Button loadBtn;
@@ -31,11 +52,22 @@ public class PotentiallyHip extends Frame {
 	private Label infoLabel;
 	private ImagePanel displayImg;
 	
+	private Panel resizePanel;
+	private Choice resizeMode;
+	private TextField resizeVal;
+	
+	private Panel colourPanel;
+	private JSlider redSlider, greenSlider, blueSlider;
+	
+	private Panel convolvePanel;
+	private Button displayMatrix;
+	
 	private PotentiallyHip() {
 		// Set up window
 		this.setSize(new Dimension(480, 240));
 		this.setLayout(new GridLayout(2, 3));
 		this.setTitle("potential-hipster");
+		this.setResizable(false);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent event) {
 				System.exit(0);
@@ -75,10 +107,90 @@ public class PotentiallyHip extends Frame {
 		infoPanel.add(displayImg);
 		this.add(infoPanel);
 		
-		// Placeholders
-		this.add(new Label("Resize stuff here"));
-		this.add(new Label("Recolour stuff here"));
-		this.add(new Label("Convolution matrix here"));
+		// Resize Panel
+		resizePanel = new Panel();
+		resizePanel.setLayout(new GridLayout(2, 1));
+		
+		resizeMode = new Choice();
+		resizeVal = new TextField("100%");
+		
+		resizeMode.addItem("By Percentage");
+		resizeMode.addItem("By Resolution");
+		resizeMode.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent event) {
+				if (event.getItem().equals("By Percentage")) {
+					resizeVal.setText("100%");
+				}
+				else {
+					resizeVal.setText("32x32");
+				}
+			}
+		});
+		resizeVal.addTextListener(new TextListener() {
+			public void textValueChanged(TextEvent event) {
+				TextField tf = (TextField)event.getSource();
+				if (resizeMode.getSelectedItem() == "By Percentage") {
+					if (!tf.getText().matches("\\d{1,}%"))
+						tf.setForeground(Color.RED);
+					else {
+						tf.setForeground(Color.BLACK);
+						// Process stuff
+					}
+				}
+				else {
+					if (!tf.getText().matches("\\d{1,}x\\d{1,}"))
+						tf.setForeground(Color.RED);
+					else {
+						tf.setForeground(Color.BLACK);
+						// Process stuff
+					}
+				}
+			}
+		});
+		
+		resizePanel.add(resizeMode);
+		resizePanel.add(resizeVal);
+		this.add(resizePanel);
+		
+		// Colourizing Panel
+		colourPanel = new Panel();
+		colourPanel.setLayout(new GridLayout(1, 3));
+		
+		redSlider = new JSlider(SwingConstants.VERTICAL, 0, 255, 0);
+		blueSlider = new JSlider(SwingConstants.VERTICAL, 0, 255, 0);
+		greenSlider = new JSlider(SwingConstants.VERTICAL, 0, 255, 0);
+		
+		redSlider.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.RED));
+		greenSlider.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.GREEN));
+		blueSlider.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLUE));
+		
+		colourPanel.add(redSlider);
+		colourPanel.add(greenSlider);
+		colourPanel.add(blueSlider);
+		this.add(colourPanel);
+		
+		// Convolution Panel
+		convolvePanel = new Panel();
+		convolvePanel.setLayout(new GridLayout());
+		
+		displayMatrix = new Button("Display Matrix");
+		
+		displayMatrix.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				new MatrixDialogue(convolutionMatrix).setVisible(true);
+			}
+		});
+		
+		convolvePanel.add(displayMatrix);
+		this.add(convolvePanel);
+	}
+	
+	public void setInfoText(String s) {
+		infoLabel.setText(s);
+	}
+	
+	public void setMatrix(int[][] matrix) {
+		convolutionMatrix = matrix;
 	}
 	
 }
