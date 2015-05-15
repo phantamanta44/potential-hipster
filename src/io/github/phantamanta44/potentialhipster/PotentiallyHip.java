@@ -36,6 +36,7 @@ public class PotentiallyHip extends Frame {
 	
 	public static final int[] BLANK_ROW = {0, 0, 0, 0, 0};
 	public static final int[][] DEFAULT_MATRIX = {BLANK_ROW, BLANK_ROW, {0, 0, 1, 0, 0}, BLANK_ROW, BLANK_ROW};
+	public static Color CORNFLOWER_BLUE = new Color(100, 149, 237);
 	
 	private static final long serialVersionUID = 1L;
 	private static PotentiallyHip instance;
@@ -175,7 +176,7 @@ public class PotentiallyHip extends Frame {
 		infoLabel = new Label();
 		displayImg = new ImagePanel();
 		
-		displayImg.setBackground(Color.BLACK);
+		displayImg.setBackground(CORNFLOWER_BLUE);
 		
 		infoPanel.add(infoLabel);
 		infoPanel.add(displayImg);
