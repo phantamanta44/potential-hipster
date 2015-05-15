@@ -1,6 +1,7 @@
 package io.github.phantamanta44.potentialhipster;
 
 import java.awt.Button;
+import java.awt.Checkbox;
 import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -68,6 +69,11 @@ public class PotentiallyHip extends Frame {
 	private Button loadBtn;
 	private Button saveBtn;
 	
+	private Panel optPanel;
+	private Checkbox doResize;
+	private Checkbox doColorize;
+	private Checkbox doConvolve;
+	
 	private Panel filePanel;
 	private java.awt.List fileDisplay;
 	
@@ -100,7 +106,7 @@ public class PotentiallyHip extends Frame {
 		
 		// Input-Output Panel
 		ioPanel = new Panel();
-		ioPanel.setLayout(new GridLayout(2, 1));
+		ioPanel.setLayout(new GridLayout(3, 1));
 		
 		loadBtn = new Button("Load");
 		saveBtn = new Button("Save");
@@ -139,8 +145,29 @@ public class PotentiallyHip extends Frame {
 			}
 		});
 		
+		optPanel = new Panel();
+		optPanel.setLayout(new GridLayout(1, 3));
+		
+		doResize = new Checkbox("Resize");
+		doColorize = new Checkbox("Colorize");
+		doConvolve = new Checkbox("Convolve");
+		
+		ItemListener optUpdater = new ItemListener() {
+			public void itemStateChanged(ItemEvent event) {
+				updateFilterStack();
+			}
+		};
+		doResize.addItemListener(optUpdater);
+		doColorize.addItemListener(optUpdater);
+		doConvolve.addItemListener(optUpdater);
+		
+		optPanel.add(doResize);
+		optPanel.add(doColorize);
+		optPanel.add(doConvolve);
+		
 		ioPanel.add(loadBtn);
 		ioPanel.add(saveBtn);
+		ioPanel.add(optPanel);
 		this.add(ioPanel);
 		
 		// File Panel
@@ -292,10 +319,12 @@ public class PotentiallyHip extends Frame {
 	public void updateFilterStack() {
 		if (fileDisplay.getSelectedItem() != null) {
 			displayImg.setImage(fileList.get(fileDisplay.getSelectedItem()));
-			displayImg.resizeImage(resizeDim);
-			if (colorizeColor != Color.BLACK)
+			if (doResize.getState())
+				displayImg.resizeImage(resizeDim);
+			if (doColorize.getState())
 				displayImg.colorizeImage(colorizeColor);
-			// displayImg.convolveImage(convolutionMatrix);
+			if (doConvolve.getState())
+				displayImg.convolveImage(convolutionMatrix);
 		}
 		else
 			displayImg.clearImage();
