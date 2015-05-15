@@ -149,7 +149,10 @@ public class PotentiallyHip extends Frame {
 		fileDisplay = new java.awt.List();
 		fileDisplay.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent event) {
-				displayImg.setImage(new File(fileDisplay.getSelectedItem()));
+				if (fileDisplay.getSelectedItem() != null)
+					displayImg.setImage(fileList.get(fileDisplay.getSelectedItem()));
+				else
+					displayImg.clearImage();
 				displayImg.repaint();
 			}
 		});
