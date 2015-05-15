@@ -24,9 +24,11 @@ import javax.swing.SwingConstants;
 
 public class PotentiallyHip extends Frame {
 	
+	public static final int[] BLANK_ROW = {0, 0, 0, 0, 0};
+	public static final int[][] DEFAULT_MATRIX = {BLANK_ROW, BLANK_ROW, {0, 0, 1, 0, 0}, BLANK_ROW, BLANK_ROW};
+	
 	private static final long serialVersionUID = 1L;
 	private static PotentiallyHip instance;
-	private static final int[] BLANK_ROW = {0, 0, 0, 0, 0};
 	
 	public static void main(String[] args) {
 		// Instantiate window and display
@@ -39,7 +41,7 @@ public class PotentiallyHip extends Frame {
 		instance.setMatrix(matrix);
 	}
 	
-	private int[][] convolutionMatrix = {BLANK_ROW, BLANK_ROW, {0, 0, 1, 0, 0}, BLANK_ROW, BLANK_ROW};
+	private int[][] convolutionMatrix = DEFAULT_MATRIX;
 	
 	private Panel ioPanel;
 	private Button loadBtn;
@@ -70,6 +72,7 @@ public class PotentiallyHip extends Frame {
 		this.setResizable(false);
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent event) {
+				PotentiallyHip.this.dispose();
 				System.exit(0);
 			}
 		});
@@ -130,7 +133,7 @@ public class PotentiallyHip extends Frame {
 			public void textValueChanged(TextEvent event) {
 				TextField tf = (TextField)event.getSource();
 				if (resizeMode.getSelectedItem() == "By Percentage") {
-					if (!tf.getText().matches("\\d{1,}%"))
+					if (!tf.getText().matches("[0-9]{1,}%"))
 						tf.setForeground(Color.RED);
 					else {
 						tf.setForeground(Color.BLACK);
@@ -138,7 +141,7 @@ public class PotentiallyHip extends Frame {
 					}
 				}
 				else {
-					if (!tf.getText().matches("\\d{1,}x\\d{1,}"))
+					if (!tf.getText().matches("[0-9]{1,}x[0-9]{1,}"))
 						tf.setForeground(Color.RED);
 					else {
 						tf.setForeground(Color.BLACK);
