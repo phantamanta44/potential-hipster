@@ -25,9 +25,10 @@ public class PotentiallyHip extends Frame {
 	
 	private Panel filePanel;
 	private java.awt.List fileList;
-	private ImagePanel displayImg;
 	
+	private Panel infoPanel;
 	private Label infoLabel;
+	private ImagePanel displayImg;
 	
 	private PotentiallyHip() {
 		this.setSize(new Dimension(480, 240));
@@ -50,19 +51,24 @@ public class PotentiallyHip extends Frame {
 		this.add(ioPanel);
 		
 		filePanel = new Panel();
-		filePanel.setLayout(new GridLayout(1, 2));
+		filePanel.setLayout(new GridLayout());
 		
 		fileList = new java.awt.List();
-		displayImg = new ImagePanel();
 		
 		fileList.add("lorem ipsum dolor set amet");
 		
 		filePanel.add(fileList);
-		filePanel.add(displayImg);
 		this.add(filePanel);
 		
+		infoPanel = new Panel();
+		infoPanel.setLayout(new GridLayout(2, 1));
+		
 		infoLabel = new Label();
-		this.add(infoLabel);
+		displayImg = new ImagePanel();
+		
+		infoPanel.add(infoLabel);
+		infoPanel.add(displayImg);
+		this.add(infoPanel);
 		
 		this.add(new Label("Resize stuff here"));
 		this.add(new Label("Recolour stuff here"));
