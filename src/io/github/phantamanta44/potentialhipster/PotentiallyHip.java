@@ -13,13 +13,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
@@ -36,7 +39,7 @@ public class PotentiallyHip extends Frame {
 	
 	private static final long serialVersionUID = 1L;
 	private static PotentiallyHip instance;
-	private static List<File> fileList = new ArrayList<>();
+	private static Map<String, File> fileList = new HashMap<>();
 	
 	public static void main(String[] args) {
 		// Instantiate window and display
@@ -117,7 +120,7 @@ public class PotentiallyHip extends Frame {
 				fc.showOpenDialog(PotentiallyHip.this);
 				if (fc.getSelectedFiles() != null) {
 					for (File f : fc.getSelectedFiles())
-						fileList.add(f);
+						fileList.put(f.getAbsolutePath(), f);
 					instance.updateFileList();
 				}
 			}
@@ -143,6 +146,24 @@ public class PotentiallyHip extends Frame {
 		filePanel.setLayout(new GridLayout());
 		
 		fileDisplay = new java.awt.List();
+		fileDisplay.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent event) {
+				displayImg.setImage(new File(fileDisplay.getSelectedItem()));
+				displayImg.repaint();
+			}
+		});
+		fileDisplay.addKeyListener(new KeyListener() {
+			public void keyPressed(KeyEvent event) {
+				if (event.getKeyCode() == KeyEvent.VK_DELETE) {
+					if (fileDisplay.getSelectedItem() != null) {
+						fileList.remove(fileDisplay.getSelectedItem());
+						updateFileList();
+					}
+				}
+			}
+			public void keyReleased(KeyEvent event) { }
+			public void keyTyped(KeyEvent event) { }
+		});
 		
 		filePanel.add(fileDisplay);
 		this.add(filePanel);
@@ -153,6 +174,8 @@ public class PotentiallyHip extends Frame {
 		
 		infoLabel = new Label();
 		displayImg = new ImagePanel();
+		
+		displayImg.setBackground(Color.BLACK);
 		
 		infoPanel.add(infoLabel);
 		infoPanel.add(displayImg);
@@ -257,8 +280,8 @@ public class PotentiallyHip extends Frame {
 	
 	public void updateFileList() {
 		fileDisplay.removeAll();
-		for (File f : fileList)
-			fileDisplay.add(f.toString());
+		for (Entry<String, File> f : fileList.entrySet())
+			fileDisplay.add(f.getKey());
 	}
 	
 }
