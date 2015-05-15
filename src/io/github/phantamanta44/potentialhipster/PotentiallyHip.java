@@ -21,6 +21,8 @@ import java.awt.event.WindowEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class PotentiallyHip extends Frame {
 	
@@ -41,6 +43,14 @@ public class PotentiallyHip extends Frame {
 		instance.setMatrix(matrix);
 	}
 	
+	public static boolean isPowerOf(int base, int n) {
+		while (n % base == 0)
+			n = n / base;
+		return n == 1;
+	}
+	
+	private Dimension resizeDim = new Dimension(32, 32);
+	private Color colorizeColor = Color.BLACK;
 	private int[][] convolutionMatrix = DEFAULT_MATRIX;
 	
 	private Panel ioPanel;
@@ -125,7 +135,7 @@ public class PotentiallyHip extends Frame {
 					resizeVal.setText("100%");
 				}
 				else {
-					resizeVal.setText("32x32");
+					resizeVal.setText("32x");
 				}
 			}
 		});
@@ -137,15 +147,18 @@ public class PotentiallyHip extends Frame {
 						tf.setForeground(Color.RED);
 					else {
 						tf.setForeground(Color.BLACK);
-						// Process stuff
+						Double scale = Double.parseDouble(tf.getText().replaceAll("%", "")) * 0.01D;
+						int asp = (int)(32 * scale);
+						resizeDim.setSize(asp, asp);
 					}
 				}
 				else {
-					if (!tf.getText().matches("[0-9]{1,}x[0-9]{1,}"))
+					if (!tf.getText().matches("[0-9]{1,}x") || !isPowerOf(2, Integer.parseInt(tf.getText().replaceAll("x", ""))))
 						tf.setForeground(Color.RED);
 					else {
 						tf.setForeground(Color.BLACK);
-						// Process stuff
+						int asp = Integer.parseInt(tf.getText().replaceAll("x", ""));
+						resizeDim.setSize(asp, asp);
 					}
 				}
 			}
@@ -155,7 +168,7 @@ public class PotentiallyHip extends Frame {
 		resizePanel.add(resizeVal);
 		this.add(resizePanel);
 		
-		// Colourizing Panel
+		// Colorizing Panel
 		colourPanel = new Panel();
 		colourPanel.setLayout(new GridLayout(1, 3));
 		
@@ -166,6 +179,14 @@ public class PotentiallyHip extends Frame {
 		redSlider.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.RED));
 		greenSlider.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.GREEN));
 		blueSlider.setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLUE));
+		ChangeListener colUpdater = new ChangeListener() {
+			public void stateChanged(ChangeEvent event) {
+				colorizeColor = new Color(redSlider.getValue(), greenSlider.getValue(), blueSlider.getValue());
+			}
+		};
+		redSlider.addChangeListener(colUpdater);
+		greenSlider.addChangeListener(colUpdater);
+		blueSlider.addChangeListener(colUpdater);
 		
 		colourPanel.add(redSlider);
 		colourPanel.add(greenSlider);
