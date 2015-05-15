@@ -15,6 +15,7 @@ public class PotentiallyHip extends Frame {
 	private static PotentiallyHip instance;
 	
 	public static void main(String[] args) {
+		// Instantiate window and display
 		instance = new PotentiallyHip();
 		instance.setVisible(true);
 	}
@@ -31,6 +32,7 @@ public class PotentiallyHip extends Frame {
 	private ImagePanel displayImg;
 	
 	private PotentiallyHip() {
+		// Set up window
 		this.setSize(new Dimension(480, 240));
 		this.setLayout(new GridLayout(2, 3));
 		this.setTitle("potential-hipster");
@@ -40,6 +42,7 @@ public class PotentiallyHip extends Frame {
 			}
 		});
 		
+		// Input-Output Panel
 		ioPanel = new Panel();
 		ioPanel.setLayout(new GridLayout(2, 1));
 		
@@ -50,6 +53,7 @@ public class PotentiallyHip extends Frame {
 		ioPanel.add(saveBtn);
 		this.add(ioPanel);
 		
+		// File Panel
 		filePanel = new Panel();
 		filePanel.setLayout(new GridLayout());
 		
@@ -60,6 +64,7 @@ public class PotentiallyHip extends Frame {
 		filePanel.add(fileList);
 		this.add(filePanel);
 		
+		// Information Panel
 		infoPanel = new Panel();
 		infoPanel.setLayout(new GridLayout(2, 1));
 		
@@ -70,6 +75,7 @@ public class PotentiallyHip extends Frame {
 		infoPanel.add(displayImg);
 		this.add(infoPanel);
 		
+		// Placeholders
 		this.add(new Label("Resize stuff here"));
 		this.add(new Label("Recolour stuff here"));
 		this.add(new Label("Convolution matrix here"));
