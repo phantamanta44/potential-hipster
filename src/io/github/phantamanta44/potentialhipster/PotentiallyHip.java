@@ -17,12 +17,17 @@ import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JFileChooser;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileFilter;
 
 public class PotentiallyHip extends Frame {
 	
@@ -31,6 +36,7 @@ public class PotentiallyHip extends Frame {
 	
 	private static final long serialVersionUID = 1L;
 	private static PotentiallyHip instance;
+	private static List<File> fileList = new ArrayList<>();
 	
 	public static void main(String[] args) {
 		// Instantiate window and display
@@ -58,7 +64,7 @@ public class PotentiallyHip extends Frame {
 	private Button saveBtn;
 	
 	private Panel filePanel;
-	private java.awt.List fileList;
+	private java.awt.List fileDisplay;
 	
 	private Panel infoPanel;
 	private Label infoLabel;
@@ -94,6 +100,40 @@ public class PotentiallyHip extends Frame {
 		loadBtn = new Button("Load");
 		saveBtn = new Button("Save");
 		
+		loadBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				JFileChooser fc = new JFileChooser();
+				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				fc.setDialogTitle("Select image files to load.");
+				fc.setFileFilter(new FileFilter() {
+					public boolean accept(File f) {
+						return (f.isDirectory() || f.getName().matches(".*\\.png"));
+					}
+					public String getDescription() {
+						return "PNG Image Files";
+					}
+				});
+				fc.setMultiSelectionEnabled(true);
+				fc.showOpenDialog(PotentiallyHip.this);
+				if (fc.getSelectedFiles() != null) {
+					for (File f : fc.getSelectedFiles())
+						fileList.add(f);
+					instance.updateFileList();
+				}
+			}
+		});
+		saveBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent event) {
+				JFileChooser fc = new JFileChooser();
+				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+				fc.setDialogTitle("Select a directory to save image files in.");
+				fc.showSaveDialog(PotentiallyHip.this);
+				if (fc.getSelectedFile() != null) {
+					// Save stuff
+				}
+			}
+		});
+		
 		ioPanel.add(loadBtn);
 		ioPanel.add(saveBtn);
 		this.add(ioPanel);
@@ -102,11 +142,9 @@ public class PotentiallyHip extends Frame {
 		filePanel = new Panel();
 		filePanel.setLayout(new GridLayout());
 		
-		fileList = new java.awt.List();
+		fileDisplay = new java.awt.List();
 		
-		fileList.add("lorem ipsum dolor set amet");
-		
-		filePanel.add(fileList);
+		filePanel.add(fileDisplay);
 		this.add(filePanel);
 		
 		// Information Panel
@@ -215,6 +253,12 @@ public class PotentiallyHip extends Frame {
 	
 	public void setMatrix(int[][] matrix) {
 		convolutionMatrix = matrix;
+	}
+	
+	public void updateFileList() {
+		fileDisplay.removeAll();
+		for (File f : fileList)
+			fileDisplay.add(f.toString());
 	}
 	
 }
