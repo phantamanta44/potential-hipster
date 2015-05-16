@@ -49,7 +49,11 @@ public class ImagePanel extends Panel {
   
     private void loadImage(File file) {
         try {
-			image = ImageIO.read(file);
+			Image tempImg = ImageIO.read(file);
+			image = new BufferedImage(tempImg.getWidth(this), tempImg.getHeight(this), BufferedImage.TYPE_INT_ARGB);
+		    Graphics2D g2d = image.createGraphics();
+		    g2d.drawImage(tempImg, 0, 0, null);
+		    g2d.dispose();
 		}
         catch (Throwable ex) {
 			ex.printStackTrace();
@@ -59,7 +63,6 @@ public class ImagePanel extends Panel {
 	public void resizeImage(Dimension dim) {
 		Image scaled = image.getScaledInstance((int)dim.getWidth(), (int)dim.getHeight(), Image.SCALE_FAST);
 		image = new BufferedImage((int)dim.getWidth(), (int)dim.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
 	    Graphics2D g2d = image.createGraphics();
 	    g2d.drawImage(scaled, 0, 0, null);
 	    g2d.dispose();
