@@ -19,7 +19,7 @@ public class FilterFactory {
     	}
     	Kernel kernel = new Kernel(dim, dim, kernelArray);
     	ConvolveFilter oper = new ConvolveFilter(kernel);
-    	oper.setEdgeAction(ConvolveFilter.WRAP_EDGES);
+    	oper.setEdgeAction(ConvolveFilter.CLAMP_EDGES);
     	oper.setUseAlpha(alpha);
     	return oper;
 	}
