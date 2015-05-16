@@ -36,9 +36,8 @@ public class MatrixDialogue extends Frame {
 				matrix[i][j].addTextListener(new TextListener() {
 					public void textValueChanged(TextEvent event) {
 						TextField tf = (TextField)event.getSource();
-						if (!tf.getText().matches("\\d{1,3}")
-								|| Integer.parseInt(tf.getText()) > 255
-								|| Integer.parseInt(tf.getText()) < 0)
+						if (!tf.getText().matches("-?[0-9]{1,3}")
+								|| Integer.parseInt(tf.getText()) > 255)
 							tf.setForeground(Color.RED);
 						else
 							tf.setForeground(Color.BLACK);

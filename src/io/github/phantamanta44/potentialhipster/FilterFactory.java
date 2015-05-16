@@ -18,10 +18,6 @@ public class FilterFactory {
     			kernelArray[(i * 5) + j] = matrix[i][j];
     	}
     	Kernel kernel = new Kernel(dim, dim, kernelArray);
-    	float[] proc = kernel.getKernelData(null);
-    	for (float f : proc) {
-    		System.out.println(f);
-    	}
     	ConvolveFilter oper = new ConvolveFilter(kernel);
     	oper.setEdgeAction(ConvolveFilter.WRAP_EDGES);
     	oper.setUseAlpha(alpha);
