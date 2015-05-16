@@ -290,7 +290,7 @@ public class PotentiallyHip extends Frame {
 		convolvePanel = new Panel();
 		convolvePanel.setLayout(new GridLayout());
 		
-		displayMatrix = new Button("Display Matrix");
+		displayMatrix = new Button("Modify Matrix");
 		
 		displayMatrix.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
