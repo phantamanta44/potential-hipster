@@ -18,6 +18,8 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 import java.awt.event.WindowAdapter;
@@ -52,7 +54,7 @@ public class PotentiallyHip extends Frame {
 		// Instantiate window and display
 		instance = new PotentiallyHip();
 		instance.setVisible(true);
-		instance.setInfoText("Load a resource pack.");
+		updateInfo();
 	}
 	
 	public static void updateMatrix(int[][] matrix) {
@@ -64,6 +66,14 @@ public class PotentiallyHip extends Frame {
 		while (n % base == 0)
 			n = n / base;
 		return n == 1;
+	}
+	
+	public static void updateInfo(String s) {
+		instance.setInfoText(s);
+	}
+	
+	public static void updateInfo() {
+		updateInfo("Mouseover a control");
 	}
 	
 	private Dimension resizeDim = new Dimension(32, 32);
@@ -322,6 +332,24 @@ public class PotentiallyHip extends Frame {
 		
 		convolvePanel.add(displayMatrix);
 		this.add(convolvePanel);
+		
+		registerTooltipListeners();
+	}
+	
+	private void registerTooltipListeners() {
+		loadBtn.addMouseListener(new TooltipListener("Load image(s)"));
+		saveBtn.addMouseListener(new TooltipListener("Save image(s)"));
+		doResize.addMouseListener(new TooltipListener("Toggle resizing"));
+		doColorize.addMouseListener(new TooltipListener("Toggle colorizing"));
+		doConvolve.addMouseListener(new TooltipListener("Toggle convolution"));
+		fileDisplay.addMouseListener(new TooltipListener("Preview/delete image(s)"));
+		displayImg.addMouseListener(new TooltipListener("Image preview"));
+		resizeMode.addMouseListener(new TooltipListener("Rescale mode"));
+		resizeVal.addMouseListener(new TooltipListener("Rescale value"));
+		redSlider.addMouseListener(new TooltipListener("Red colour slider"));
+		greenSlider.addMouseListener(new TooltipListener("Green colour slider"));
+		blueSlider.addMouseListener(new TooltipListener("Blue colour slider"));
+		displayMatrix.addMouseListener(new TooltipListener("Modify convolution matrix"));
 	}
 	
 	public void setInfoText(String s) {
@@ -370,6 +398,22 @@ public class PotentiallyHip extends Frame {
 			img = oper.filter(img, null);
 		}
 		return img;
+	}
+	
+	private class TooltipListener implements MouseListener {
+		private String s;
+		public TooltipListener(String desc) {
+			s = desc;
+		}
+		public void mouseEntered(MouseEvent event) {
+			PotentiallyHip.updateInfo(s);
+		}
+		public void mouseExited(MouseEvent event) {
+			PotentiallyHip.updateInfo();
+		}
+		public void mouseClicked(MouseEvent event) { }
+		public void mousePressed(MouseEvent event) { }
+		public void mouseReleased(MouseEvent event) { }
 	}
 	
 }
