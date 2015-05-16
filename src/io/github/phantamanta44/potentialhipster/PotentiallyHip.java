@@ -6,7 +6,9 @@ import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Graphics2D;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Label;
 import java.awt.Panel;
 import java.awt.TextField;
@@ -20,11 +22,14 @@ import java.awt.event.TextEvent;
 import java.awt.event.TextListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageOp;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JFileChooser;
 import javax.swing.JSlider;
@@ -139,8 +144,25 @@ public class PotentiallyHip extends Frame {
 				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fc.setDialogTitle("Select a directory to save image files in.");
 				fc.showSaveDialog(PotentiallyHip.this);
-				if (fc.getSelectedFile() != null) {
-					// Save stuff
+				if (fc.getSelectedFile() != null && fc.getSelectedFile().isDirectory()) {
+					String path = fc.getSelectedFile().getAbsolutePath();
+					for (Entry<String, File> e : fileList.entrySet()) {
+						try {
+							BufferedImage tempImg = ImageIO.read(e.getValue());
+							BufferedImage image = new BufferedImage(tempImg.getWidth(PotentiallyHip.this), tempImg.getHeight(PotentiallyHip.this), BufferedImage.TYPE_INT_ARGB);
+						    Graphics2D g2d = image.createGraphics();
+						    g2d.drawImage(tempImg, 0, 0, null);
+						    g2d.dispose();
+						    
+						    image = applyFilters(image);
+						    
+						    File outFile = new File(path, e.getValue().getName());
+						    ImageIO.write(image, "PNG", outFile);
+						}
+						catch (Throwable th) {
+							th.printStackTrace();
+						}
+					}
 				}
 			}
 		});
@@ -329,6 +351,25 @@ public class PotentiallyHip extends Frame {
 		else
 			displayImg.clearImage();
 		displayImg.repaint();
+	}
+	
+	public BufferedImage applyFilters(BufferedImage img) {
+		if (doResize.getState()) {
+			Image scaled = img.getScaledInstance((int)resizeDim.getWidth(), (int)resizeDim.getHeight(), Image.SCALE_FAST);
+			img = new BufferedImage((int)resizeDim.getWidth(), (int)resizeDim.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		    Graphics2D g2d = img.createGraphics();
+		    g2d.drawImage(scaled, 0, 0, null);
+		    g2d.dispose();
+		}
+		if (doColorize.getState()) {
+			BufferedImageOp oper = FilterFactory.generateColorization(colorizeColor);
+		    img = oper.filter(img, null);
+		}
+		if (doConvolve.getState()) {
+			BufferedImageOp oper = FilterFactory.generateConvolution(convolutionMatrix, convolutionMatrix.length);
+			img = oper.filter(img, null);
+		}
+		return img;
 	}
 	
 }
