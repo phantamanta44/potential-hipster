@@ -2,15 +2,16 @@ package io.github.phantamanta44.potentialhipster;
 
 import java.awt.Color;
 import java.awt.image.BufferedImageOp;
-import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.awt.image.LookupOp;
 import java.awt.image.LookupTable;
 import java.awt.image.ShortLookupTable;
 
+import com.jhlabs.image.ConvolveFilter;
+
 public class FilterFactory {
 	
-	public static BufferedImageOp generateConvolution(int[][] matrix, int dim) {
+	public static BufferedImageOp generateConvolution(int[][] matrix, int dim, boolean alpha) {
 		float[] kernelArray = new float[dim * dim];
     	for (int i = 0; i < matrix.length; i++) {
     		for (int j = 0; j < matrix[i].length; j++) {
@@ -18,8 +19,14 @@ public class FilterFactory {
     		}
     	}
     	Kernel kernel = new Kernel(dim, dim, kernelArray);
-    	ConvolveOp oper = new ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null);
+    	ConvolveFilter oper = new ConvolveFilter(kernel);
+    	oper.setEdgeAction(ConvolveFilter.WRAP_EDGES);
+    	oper.setUseAlpha(alpha);
     	return oper;
+	}
+	
+	public static BufferedImageOp generateConvolution(int[][] matrix, int dim) {
+		return generateConvolution(matrix, dim, true);
 	}
 	
 	public static BufferedImageOp generateColorization(Color col) {
