@@ -55,7 +55,7 @@ public class MatrixDialogue extends Frame {
 		for (int i = 0; i < matrix.length; i++) {
 			intMatrix.add(new ArrayList<Integer>(5));
 			for (int j = 0; j < matrix[i].length; j++) {
-				if (matrix[i][j].getText().matches("[0-9]{1,3}"))
+				if (matrix[i][j].getText().matches("-?[0-9]{1,3}"))
 					intMatrix.get(i).add(Integer.parseInt(matrix[i][j].getText()));
 				else
 					intMatrix.get(i).add(0);

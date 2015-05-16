@@ -14,11 +14,14 @@ public class FilterFactory {
 	public static BufferedImageOp generateConvolution(int[][] matrix, int dim, boolean alpha) {
 		float[] kernelArray = new float[dim * dim];
     	for (int i = 0; i < matrix.length; i++) {
-    		for (int j = 0; j < matrix[i].length; j++) {
-    			kernelArray[i + j] = matrix[i][j];
-    		}
+    		for (int j = 0; j < matrix[i].length; j++)
+    			kernelArray[(i * 5) + j] = matrix[i][j];
     	}
     	Kernel kernel = new Kernel(dim, dim, kernelArray);
+    	float[] proc = kernel.getKernelData(null);
+    	for (float f : proc) {
+    		System.out.println(f);
+    	}
     	ConvolveFilter oper = new ConvolveFilter(kernel);
     	oper.setEdgeAction(ConvolveFilter.WRAP_EDGES);
     	oper.setUseAlpha(alpha);
